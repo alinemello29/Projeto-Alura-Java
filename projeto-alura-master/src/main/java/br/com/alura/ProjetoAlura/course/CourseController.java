@@ -12,10 +12,30 @@ import org.springframework.web.bind.annotation.RestController;
 public class CourseController {
 
     @PostMapping("/course/new")
-    public ResponseEntity createCourse(@Valid @RequestBody NewCourseDTO newCourse) {
+    public ResponseEntity<Void> createCourse(@Valid @RequestBody NewCourseDTO newCourse) {
         // TODO: Implementar a Questão 1 - Cadastro de Cursos aqui...
+        if (!isValidCourseCode(newCourse.getCode())) {
+            return ResponseEntity.badRequest().build(); 
+        }
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        if (courseService.existsByCode(newCourse.getCode())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build(); 
+        }
+
+        Course course = new Course();
+        course.setName(newCourse.getName());
+        course.setCode(newCourse.getCode());
+        course.setInstructor(newCourse.getInstructor());
+        course.setDescription(newCourse.getDescription());
+        course.setStatus(CourseStatus.ACTIVE); 
+
+        courseService.save(course);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build(); 
+    }
+
+    private boolean isValidCourseCode(String code) {
+        return code.matches("^[a-zA-Z\\-]{4,10}$");
     }
 
     @PostMapping("/course/{code}/inactive")

@@ -44,32 +44,18 @@ public class RegistrationController {
 
         // TODO: Implementar a Questão 4 - Relatório de Cursos Mais Acessados aqui...
 
-        // Dados fictícios abaixo que devem ser substituídos
-        items.add(new RegistrationReportItem(
-                "Java para Iniciantes",
-                "java",
-                "Charles",
-                "charles@alura.com.br",
-                10L
-        ));
+        List<CourseReport> reportData = registrationRepository.findTopCourses(); // Suponha que você tenha esse método no repositório
 
-        items.add(new RegistrationReportItem(
-                "Spring para Iniciantes",
-                "spring",
-                "Charles",
-                "charles@alura.com.br",
-                9L
-        ));
-
-        items.add(new RegistrationReportItem(
-                "Maven para Avançados",
-                "maven",
-                "Charles",
-                "charles@alura.com.br",
-                9L
-        ));
+        for (CourseReport report : reportData) {
+            items.add(new RegistrationReportItem(
+                report.getCourseName(),
+                report.getCourseCode(),
+                report.getUserName(),
+                report.getUserEmail(),
+                report.getRegistrationCount()
+            ));
+        }
 
         return ResponseEntity.ok(items);
     }
-
 }

@@ -49,7 +49,6 @@ public class CourseController {
         return ResponseEntity.notFound().build(); 
     }
 
-    // Verifica se o curso já está inativo
     if (course.getStatus() == CourseStatus.INACTIVE) {
         return ResponseEntity.status(HttpStatus.CONFLICT).build(); 
     }

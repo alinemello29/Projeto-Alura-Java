@@ -17,8 +17,25 @@ public class RegistrationController {
     @PostMapping("/registration/new")
     public ResponseEntity createCourse(@Valid @RequestBody NewRegistrationDTO newRegistration) {
         // TODO: Implementar a Questão 3 - Criação de Matrículas aqui...
+         Course course = courseRepository.findByCode(newRegistration.getCourseCode());
+        if (course == null || course.getStatus() != CourseStatus.ACTIVE) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build(); // Curso inválido ou inativo
+        }
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        // Verifique se o usuário já está matriculado
+        if (registrationRepository.existsByUserIdAndCourseCode(newRegistration.getUserId(), newRegistration.getCourseCode())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build(); // Conflito, matrícula já existe
+        }
+
+        // Criar nova matrícula
+        Registration registration = new Registration();
+        registration.setUserId(newRegistration.getUserId());
+        registration.setCourse(course);
+        registration.setRegistrationDate(LocalDateTime.now());
+
+        registrationRepository.save(registration);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build(); 
     }
 
     @GetMapping("/registration/report")

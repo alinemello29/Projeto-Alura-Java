@@ -58,4 +58,3 @@ public class RegistrationController {
 
         return ResponseEntity.ok(items);
     }
-}
